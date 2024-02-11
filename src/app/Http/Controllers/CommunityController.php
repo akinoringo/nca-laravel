@@ -17,4 +17,17 @@ class CommunityController extends Controller
         Community::create(['name' => $communityName]);
         return response()->json(['コミュニティを作成しました']);
     }
+
+    /**
+     * ユーザーをコミュニティに所属させるメソッド
+     */
+    public function join(Request $request, Community $community)
+    {
+        $userId = $request->userId;
+
+        $user = User::findOrFail($userId);
+        $user->communities()->syncWithoutDetaching([$community->id]);
+
+        return response()->json(['message' => 'コミュニティに所属しました。']);
+    }
 }
