@@ -23,12 +23,7 @@ class PostController extends Controller
         $user = $request->user();
 
         // 認可
-        $userBelongsToCommuity = $community->users()
-            ->wherePivot('user_id', $user->id)
-            ->exists();
-        if (!$userBelongsToCommuity) {
-            throw new AccessDeniedException('ユーザは指定されたコミュニティに所属していません');
-        }
+        $this->authorize('store', [Post::class, $community]);
 
         // フォーマットバリデーション
         $validator = Validator::make($request->all(), [
