@@ -20,10 +20,11 @@ class PostController extends Controller
      */
     public function store(Request $request, Community $community)
     {
-        $userId = $request->userId;
+        $user = $request->user();
+
         // 認可
         $userBelongsToCommuity = $community->users()
-            ->wherePivot('user_id', $userId)
+            ->wherePivot('user_id', $user->id)
             ->exists();
         if (!$userBelongsToCommuity) {
             throw new AccessDeniedException('ユーザは指定されたコミュニティに所属していません');
@@ -37,7 +38,6 @@ class PostController extends Controller
         $validator->validate();
 
         // ドメインバリデーション
-        $user = User::findOrFail($userId);
         $userPostsCountToday = $user->posts()
             ->where('community_id', $community->id)
             ->where('created_at', '>=', Carbon::createMidnightDate())

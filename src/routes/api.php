@@ -19,10 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/communities')->group(function () {
         Route::post('/{community}/join', [CommunityController::class, 'join']);
+        Route::post('/{community}/posts', [PostController::class, 'store']);
         Route::post('/', [CommunityController::class, 'store']);
     });
-});
-
-Route::prefix('/communities')->group(function () {
-    Route::post('/{community}/posts', [PostController::class, 'store']);
 });

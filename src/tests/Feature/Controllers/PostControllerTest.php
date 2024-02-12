@@ -26,12 +26,12 @@ class PostControllerTest extends TestCase
     {
         // arange
         $user = User::factory()->create();
+        $this->actingAs($user);
         $community = Community::factory()->create();
         $user->communities()->syncWithoutDetaching($community->id);
 
         // act
         $response = $this->postJson("/api/communities/{$community->id}/posts", [
-            'userId' => $user->id,
             'title' => 'テストタイトル',
             'body' => 'テストボディ'
         ]);
@@ -52,13 +52,13 @@ class PostControllerTest extends TestCase
     {
         // arange
         $user = User::factory()->create();
+        $this->actingAs($user);
         $community = Community::factory()->create();
         $user->communities()->syncWithoutDetaching($community->id);
         Post::factory(2)->create(['user_id' => $user->id, 'community_id' => $community->id]);
 
         // act
         $response = $this->postJson("/api/communities/{$community->id}/posts", [
-            'userId' => $user->id,
             'title' => 'テストタイトル',
             'body' => 'テストボディ'
         ]);
