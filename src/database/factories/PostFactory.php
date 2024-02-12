@@ -20,7 +20,7 @@ class PostFactory extends Factory
     {
         $user = User::factory()->create();
         $community = Community::factory()->create();
-        $community->users()->syncWithoutDetaching($community->id);
+        $user->communities()->syncWithoutDetaching($community->id);
 
         return [
             'user_id' => $user->id,
