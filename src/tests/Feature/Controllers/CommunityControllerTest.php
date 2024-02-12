@@ -24,11 +24,13 @@ class CommunityControllerTest extends TestCase
     public function test_store_success(): void
     {
         // act
+        $user = User::factory()->create();
+        $this->actingAs($user);
         $response = $this->postJson('/api/communities', ['name' => 'テストコミュニティ']);
 
         // assert
         $response->assertStatus(200)
-            ->assertJson(['message' => 'コミュニティを作成しました']);
+            ->assertJson(['name' => 'テストコミュニティ']);
         $this->assertDatabaseHas(Community::class, ['name' => 'テストコミュニティ']);
     }
 
@@ -40,6 +42,7 @@ class CommunityControllerTest extends TestCase
     {
         // arrange
         $user = User::factory()->create();
+        $this->actingAs($user);
         $community = Community::factory()->create();
 
         // act

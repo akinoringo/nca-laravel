@@ -29,7 +29,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')
+            Route::middleware('api', \Illuminate\Session\Middleware\StartSession::class)
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
