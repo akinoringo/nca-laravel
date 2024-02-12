@@ -24,6 +24,8 @@ class CommunityControllerTest extends TestCase
     public function test_store_success(): void
     {
         // act
+        $user = User::factory()->create();
+        $this->actingAs($user);
         $response = $this->postJson('/api/communities', ['name' => 'テストコミュニティ']);
 
         // assert

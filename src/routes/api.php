@@ -17,14 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('/communities')->group(function () {
+        Route::post('/', [CommunityController::class, 'store']);
+    });
 });
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 Route::prefix('/communities')->group(function () {
-    Route::post('/', [CommunityController::class, 'store']);
     Route::post('/{community}/join', [CommunityController::class, 'join']);
     Route::post('/{community}/posts', [PostController::class, 'store']);
 });
