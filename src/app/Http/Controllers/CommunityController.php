@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Community;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class CommunityController extends Controller
@@ -27,9 +26,7 @@ class CommunityController extends Controller
      */
     public function join(Request $request, Community $community)
     {
-        $userId = $request->userId;
-
-        $user = User::findOrFail($userId);
+        $user = $request->user();
         $user->communities()->syncWithoutDetaching([$community->id]);
 
         return response()->json(['message' => 'コミュニティに所属しました。']);

@@ -42,6 +42,7 @@ class CommunityControllerTest extends TestCase
     {
         // arrange
         $user = User::factory()->create();
+        $this->actingAs($user);
         $community = Community::factory()->create();
 
         // act
