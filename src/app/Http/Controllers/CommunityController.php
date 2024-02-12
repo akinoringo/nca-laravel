@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class CommunityController extends Controller
 {
+
     /**
      * コミュニティを作成するメソッド
      */
@@ -15,6 +16,19 @@ class CommunityController extends Controller
     {
         $communityName = $request->name;
         Community::create(['name' => $communityName]);
-        return response()->json(['コミュニティを作成しました']);
+        return response()->json(['message' => 'コミュニティを作成しました']);
+    }
+
+    /**
+     * ユーザーをコミュニティに所属させるメソッド
+     */
+    public function join(Request $request, Community $community)
+    {
+        $userId = $request->userId;
+
+        $user = User::findOrFail($userId);
+        $user->communities()->syncWithoutDetaching([$community->id]);
+
+        return response()->json(['message' => 'コミュニティに所属しました。']);
     }
 }

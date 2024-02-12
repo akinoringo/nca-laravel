@@ -42,4 +42,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * communitiesテーブルへのリレーション
+     */
+    public function communities()
+    {
+        return $this->belongsToMany(Community::class);
+    }
 }
