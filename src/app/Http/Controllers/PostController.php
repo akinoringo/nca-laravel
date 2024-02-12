@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\StoreRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Community;
 use App\Models\Post;
 use App\Models\User;
@@ -42,10 +43,6 @@ class PostController extends Controller
         $post->community()->associate($community);
         $post->save();
 
-        return response()->json([
-            'id' => $post->id,
-            'title' => $post->title,
-            'body' => $post->body
-        ]);
+        return response()->json(new PostResource($post));
     }
 }
