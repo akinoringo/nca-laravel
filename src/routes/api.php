@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('/communities')->group(function () {
     Route::post('/', [CommunityController::class, 'store']);
     Route::post('/{community}/join', [CommunityController::class, 'join']);
+    Route::post('/{community}/posts', [PostController::class, 'store']);
 });
