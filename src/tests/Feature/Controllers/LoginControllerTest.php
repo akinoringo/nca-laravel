@@ -19,7 +19,7 @@ class LoginControllerTest extends TestCase
     public function test_login_OK(): void
     {
         $user = User::factory()->create();
-        $response = $this->postJson('/api/login', ['email' => $user->email, 'password' => 'password']);
+        $response = $this->postJson('/login', ['email' => $user->email, 'password' => 'password']);
         $response->assertStatus(200);
     }
 }
