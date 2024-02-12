@@ -28,7 +28,7 @@ class CommunityControllerTest extends TestCase
 
         // assert
         $response->assertStatus(200)
-            ->assertJson(['message' => 'コミュニティを作成しました']);
+            ->assertJson(['name' => 'テストコミュニティ']);
         $this->assertDatabaseHas(Community::class, ['name' => 'テストコミュニティ']);
     }
 

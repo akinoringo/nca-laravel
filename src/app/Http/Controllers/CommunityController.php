@@ -15,8 +15,11 @@ class CommunityController extends Controller
     public function store(Request $request)
     {
         $communityName = $request->name;
-        Community::create(['name' => $communityName]);
-        return response()->json(['message' => 'コミュニティを作成しました']);
+        $community = Community::create(['name' => $communityName]);
+        return response()->json([
+            'id' => $community->id,
+            'name' =>  $community->name,
+        ]);
     }
 
     /**
