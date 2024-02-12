@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\StoreRequest;
 use App\Models\Community;
 use App\Models\Post;
 use App\Models\User;
@@ -18,19 +19,14 @@ class PostController extends Controller
      *
      * というエンドポイントで， {community} に指定された ID でルートモデルバインディング
      */
-    public function store(Request $request, Community $community)
+    public function store(StoreRequest $request, Community $community)
     {
-        $user = $request->user();
-
         // 認可
+        $user = $request->user();
         $this->authorize('store', [Post::class, $community]);
 
         // フォーマットバリデーション
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:30',
-            'body' => 'required|string|max:10000',
-        ]);
-        $validator->validate();
+        $post = $request->makePost();
 
         // ドメインバリデーション
         $userPostsCountToday = $user->posts()
@@ -42,7 +38,6 @@ class PostController extends Controller
             throw new TooManyRequestsHttpException(null, '本日の投稿可能な回数を超えました。');
         }
 
-        $post = new Post($validator->validated());
         $post->user()->associate($user);
         $post->community()->associate($community);
         $post->save();
