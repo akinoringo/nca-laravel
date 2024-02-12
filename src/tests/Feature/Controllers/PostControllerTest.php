@@ -21,7 +21,6 @@ class PostControllerTest extends TestCase
     /**
      * 投稿作成テスト
      * 正常系
-     * @group post
      */
     public function test_store_OK(): void
     {
@@ -48,7 +47,6 @@ class PostControllerTest extends TestCase
     /**
      * 投稿作成テスト
      * 異常系
-     * @group post
      */
     public function test_store_NG(): void
     {

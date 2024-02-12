@@ -12,6 +12,11 @@ class CommunityControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+    }
+
     /**
      * コミュニティ作成テスト
      * 正常系
