@@ -50,4 +50,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Community::class);
     }
+
+    /**
+     * postsテーブルへのリレーション
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

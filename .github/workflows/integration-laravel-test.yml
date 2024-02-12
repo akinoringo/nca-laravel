@@ -1,0 +1,54 @@
+name: Laravel Testing
+
+on:
+  pull_request:
+
+jobs:
+  laravel-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Ubuntu Version
+        run: cat /etc/os-release
+
+      - name: Docker Version
+        run: docker version
+
+      - name: Docker Compose Build and Up
+        run: |
+          docker-compose build
+          docker-compose up -d
+
+      - name: Docker Compose Process
+        run: docker-compose ps -a
+
+      - name: PHP, Composer Version
+        run: |
+          docker-compose exec -T app php --version
+          docker-compose exec -T app composer --version
+
+      - name: Composer Install
+        run: docker-compose exec -T app composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+
+      - name: Composer Dump Autoload
+        run: docker-compose exec -T app composer dump-autoload -q
+
+      - name: Laravel Settings
+        run: |
+          docker-compose exec -T app cp .env.example .env
+          docker-compose exec -T app php artisan key:generate
+          docker-compose exec -T app php artisan optimize
+          docker-compose exec -T app chmod -R 777 storage bootstrap/cache
+
+      - name: Laravel Version
+        run: docker-compose exec -T app php artisan --version
+
+      - name: Laravel Migrate Testing
+        run: docker-compose exec -T app php artisan migrate
+
+      - name: Laravel PHPUnit Testing
+        run: |
+          docker-compose exec -T app php artisan config:clear
+          docker-compose exec -T app php artisan test
