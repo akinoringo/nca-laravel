@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\StoreRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Community;
 use App\Models\Post;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use App\UseCases\Post\PostLimitExceededException;
+use App\UseCases\Post\StoreAction;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class PostController extends Controller
@@ -18,44 +17,20 @@ class PostController extends Controller
      *
      * というエンドポイントで， {community} に指定された ID でルートモデルバインディング
      */
-    public function store(Request $request, Community $community)
+    public function store(StoreRequest $request, Community $community, StoreAction $action)
     {
-        $user = $request->user();
-
         // 認可
-        $userBelongsToCommuity = $community->users()
-            ->wherePivot('user_id', $user->id)
-            ->exists();
-        if (!$userBelongsToCommuity) {
-            throw new AccessDeniedException('ユーザは指定されたコミュニティに所属していません');
-        }
+        $user = $request->user();
+        $this->authorize('store', [Post::class, $community]);
 
         // フォーマットバリデーション
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:30',
-            'body' => 'required|string|max:10000',
-        ]);
-        $validator->validate();
+        $post = $request->makePost();
 
-        // ドメインバリデーション
-        $userPostsCountToday = $user->posts()
-            ->where('community_id', $community->id)
-            ->where('created_at', '>=', Carbon::createMidnightDate())
-            ->count();
-
-        if ($userPostsCountToday >= 2) {
-            throw new TooManyRequestsHttpException(null, '本日の投稿可能な回数を超えました。');
+        try {
+            // ドメインバリデーションを呼び出す
+            return response()->json(new PostResource($action($user, $community, $post)));
+        } catch (PostLimitExceededException $e) {
+            throw new TooManyRequestsHttpException(null, $e->getMessage(), $e);
         }
-
-        $post = new Post($validator->validated());
-        $post->user()->associate($user);
-        $post->community()->associate($community);
-        $post->save();
-
-        return response()->json([
-            'id' => $post->id,
-            'title' => $post->title,
-            'body' => $post->body
-        ]);
     }
 }
