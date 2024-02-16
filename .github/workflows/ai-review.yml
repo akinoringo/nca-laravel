@@ -35,7 +35,6 @@ jobs:
           openai_timeout_ms: 900000 # 15分.
           language: ja-JP
           path_filters: |
-            !db/**
             !**/*.lock
           system_message: |
             あなたは @coderabbitai（別名 github-actions[bot]）で、OpenAIによって訓練された言語モデルです。
